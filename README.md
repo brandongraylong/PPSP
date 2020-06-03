@@ -1,2 +1,3 @@
-# PPSP
-Python Persistent Shell Process
+# Python Persistent Shell Process (PPSP)
+
+
