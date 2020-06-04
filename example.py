@@ -1,4 +1,4 @@
-import argparse, logging
+import argparse
 
 from ppsp import ppsp
 
