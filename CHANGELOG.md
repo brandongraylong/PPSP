@@ -3,6 +3,19 @@
 Changes between project versions will be documented here.
 
 
+### [2.0.0]
+### Added
+- Ability to run multiple shell commands at one time
+- example2.py for an example of multiple shell commands at once
+
+### Changed
+- Shell commands now get executed in a daemon thread and must be stopped when status is stopping
+- Made PPSP class private
+
+### Removed
+- PPSP Exception classes
+
+
 ## [1.0.1]
 ### Added
 - Stopping status flag

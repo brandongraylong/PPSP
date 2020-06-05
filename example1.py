@@ -36,7 +36,17 @@ def main():
     )
     args = parser.parse_args()
 
-    ppsp(args.command, args.verbose, args.exit_condition)
+
+    instance = ppsp(args.command, args.exit_condition)
+    instance.start()
+    while True:
+        if instance.status.stopping:
+            break
+    instance.stop()
+
+    if args.verbose:
+        while not instance.stdout_queue.empty():
+            print(instance.stdout_queue.get())
 
 
 if __name__ == "__main__":
