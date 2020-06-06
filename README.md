@@ -16,7 +16,7 @@ Tested with Python version 3.7.
 
 ## Examples
 ### example1.py
-`
+```
 import argparse
 
 from ppsp import ppsp
@@ -71,10 +71,10 @@ def main():
 if __name__ == "__main__":
     main()
 
-`
+```
 
 ### example2.py
-`
+```
 from ppsp import ppsp
 
 
@@ -110,4 +110,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-`
+```
