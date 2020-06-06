@@ -19,7 +19,7 @@ Tested with Python version 3.7.
 ```
 import argparse
 
-from ppsp import ppsp
+from ppsp.utils import runner
 
 
 def main():
@@ -56,7 +56,7 @@ def main():
     args = parser.parse_args()
 
 
-    instance = ppsp(args.command, args.exit_condition)
+    instance = runner(args.command, args.exit_condition)
     instance.start()
     while True:
         if instance.status.stopping:
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
 ### example2.py
 ```
-from ppsp import ppsp
+from ppsp.utils import runner
 
 
 COMMANDS_TO_RUN = ['ls -l', 'ping google.com -w 5']
@@ -84,7 +84,7 @@ COMMANDS_TO_RUN = ['ls -l', 'ping google.com -w 5']
 def main():
     instances = []
     for cmd in COMMANDS_TO_RUN:
-        instance = ppsp(cmd)
+        instance = runner(cmd)
         instance.start()
         instances += [instance]
 

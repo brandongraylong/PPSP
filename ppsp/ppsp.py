@@ -1,7 +1,7 @@
 import os, sys, queue, re, subprocess, threading
 
 
-class _PPSP:
+class PPSP:
     class _Status:
         running = False
         stopping = False
@@ -126,22 +126,3 @@ class _PPSP:
 
             if not self._stdin_queue.empty():
                 self.__send_input(self._stdin_queue.get())
-
-
-def __ppsp(shell_command: str, return_val: dict = {}, exit_condition: str = None) -> None:
-    ppsp_instance = _PPSP(shell_command, exit_condition)
-    return_val['val'] = ppsp_instance
-
-
-def ppsp(shell_command: str, exit_condition: str = None) -> _PPSP:
-    return_val = {
-        'val': None
-    }
-    ppsp_th = threading.Thread(target=__ppsp, args=(shell_command, return_val, exit_condition),
-        daemon=True)
-    ppsp_th.start()
-
-    while return_val['val'] is None:
-        continue
-
-    return return_val['val']
