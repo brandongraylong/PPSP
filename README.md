@@ -14,6 +14,10 @@ Tested with Python version 3.7.
 - Run a game server or multiple game servers at once
 
 
+## How to install
+```pip install git+git://github.com/brandongraylong/PPSP@master#egg=PPSP```
+
+
 ## Examples
 ### example1.py
 ```
