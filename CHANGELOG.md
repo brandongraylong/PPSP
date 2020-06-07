@@ -3,6 +3,11 @@
 Changes between project versions will be documented here.
 
 
+## [3.0.1]
+### Changed
+- README now gives accurate install instructions via pip
+
+
 ## [3.0.0]
 ### Added
 - Ability to only start capturing output and allowing commands to be issued when process output line matches start condition

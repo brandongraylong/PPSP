@@ -1,8 +1,4 @@
-# Python Persistent Shell Process (PPSP) v3.0.0
-
-
-## Current Version
-Will be sticking at v3.x.x for a while to work on performance and quality improvements, so there should be no new features that aren't backwards compatible for a while if at all.
+# Python Persistent Shell Process (PPSP) v3.0.1
 
 
 ## About
@@ -19,7 +15,7 @@ Tested with Python version 3.7.
 
 
 ## How to install
-```pip install git+git://github.com/brandongraylong/PPSP@master```
+```pip install ppsp```
 
 
 ## Example Program
