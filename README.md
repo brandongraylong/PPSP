@@ -39,7 +39,6 @@ RUNNNERS = [
 def main():
     instances = []
     for r in RUNNNERS:
-        
         instance = runner(
             r['command'],
             start_condition=r['start_condition'] if 'start_condition' in r else None,
@@ -50,6 +49,10 @@ def main():
         instances += [instance]
 
 
+    # In this loop, it's a good idea to get output from stdout_queue every time
+    # to avoid high memory usage of long running processes (and to check
+    # if you need to do something in response to your process output, if applicable). 
+    # Furthermore, memory usage caps aren't yet implemented in PPSP.
     while True:
         all_stopped = True
         for instance in instances:
