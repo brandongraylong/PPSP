@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='ppsp',
-    version='2.0.1',
+    version='2.0.3',
     description='PPSP is a useful python utility '
                 'for running a command, getting command '
                 'line output, and writing additional commands '

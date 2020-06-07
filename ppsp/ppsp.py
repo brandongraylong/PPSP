@@ -33,9 +33,7 @@ class PPSP:
         try:
             self._exit_condition = re.compile(exit_condition) \
                 if exit_condition is not None else None
-        except re.error as e:
-            pass
-            
+        except re.error as e:            
             self._exit_condition = None
         
         # Subprocess

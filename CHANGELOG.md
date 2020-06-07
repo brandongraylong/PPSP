@@ -3,6 +3,11 @@
 Changes between project versions will be documented here.
 
 
+## [2.0.3]
+### Fixed
+- Removed accidental pass keyword where regex exit condition would not be set to None on error
+
+
 ## [2.0.2]
 ### Changed
 - Changed stdin/stdout buffering to -1 (default) for subprocess to properly process data as binary buffered
