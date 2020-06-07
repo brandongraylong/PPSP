@@ -2,7 +2,7 @@
 
 
 ## Current Version
-Will be sticking at v3.x.x for the forseeable future, and no breaking changes should happen after this version for good while :)
+Will be sticking at v3.x.x for a while to work on performance and quality improvements, so there should be no new features that aren't backwards compatible for a while if at all.
 
 
 ## About
