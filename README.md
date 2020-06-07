@@ -19,7 +19,7 @@ Tested with Python version 3.7.
 
 
 ## How to install
-```pip install git+git://github.com/brandongraylong/PPSP@master#egg=PPSP```
+```pip install git+git://github.com/brandongraylong/PPSP@master```
 
 
 ## Example Program
