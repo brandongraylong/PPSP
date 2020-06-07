@@ -1,6 +1,10 @@
 # Python Persistent Shell Process (PPSP) v3.0.0
 
 
+## Current Version
+Will be sticking at v3.x.x for the forseeable future, and no breaking changes should happen after this version for good while :)
+
+
 ## About
 PPSP is a useful python utility for running a command, getting command line output, and writing additional commands while the process is running.
 
