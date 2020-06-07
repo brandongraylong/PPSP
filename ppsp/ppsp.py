@@ -101,8 +101,7 @@ class PPSP:
             cmd (str): command to be sent via stdin to subprocess
         """
 
-        if cmd:
-            self._stdin_queue.put(cmd)
+        self._stdin_queue.put(cmd)
 
     def start(self) -> None:
         """Starts the subprocess with initial command.
@@ -143,18 +142,21 @@ class PPSP:
         """
 
         self._subprocess = subprocess.Popen(self._shell_command.split(), 
-            stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, 
-            cwd=os.getcwd(), bufsize=1)
+            stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, 
+            cwd=os.getcwd())
             
-    def __send_input(self, msg: str) -> None:
+    def __send_input(self) -> None:
         """Private method for sending input via stdin to subprocess.
-
-        Args:
-            msg (str): string input to write via stdin to subprocess
+        Gets data from stdin queue.
         """
 
-        self._subprocess.stdin.write(bytes(msg + '\n', sys.getdefaultencoding()))
-        self._subprocess.stdin.flush()
+        try:
+            if self._subprocess:
+                self._subprocess.stdin.write(bytes(self._stdin_queue.get() + 
+                    '\n', sys.getdefaultencoding()))
+                self._subprocess.stdin.flush()
+        except (BrokenPipeError, AttributeError):
+            pass
 
     def __status(self) -> None:
         """Status thread that checks if the subprocess has 
@@ -208,4 +210,4 @@ class PPSP:
                 break
 
             if not self._stdin_queue.empty():
-                self.__send_input(self._stdin_queue.get())
+                self.__send_input()

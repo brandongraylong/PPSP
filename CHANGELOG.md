@@ -3,6 +3,16 @@
 Changes between project versions will be documented here.
 
 
+## [2.0.2]
+### Changed
+- Changed stdin/stdout buffering to -1 (default) for subprocess to properly process data as binary buffered
+- Removed unecessary conditionals
+
+### Fixed
+- Broken pipe errors not being handled
+- Issue where stdin would error but input would already be removed from input queue
+
+
 ## [2.0.1]
 ### Added
 - Docstrings to classes and functions

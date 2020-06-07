@@ -1,4 +1,4 @@
-# Python Persistent Shell Process (PPSP) v2.0.1
+# Python Persistent Shell Process (PPSP) v2.0.2
 
 
 ## About
