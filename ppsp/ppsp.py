@@ -2,7 +2,11 @@ import os, sys, queue, re, subprocess, threading
 
 
 class PPSP:
-    """PPSP class is used for running a specific shell command. 
+    """PPSP class is used for running a specific shell command.
+    If a start condition is not provided, then processing of the stdin
+    queue will begin immediately. If a start condition is provided,
+    the stdin queue will only be used after the start condition is met, and
+    the stdout will only start to fill up when the start condition is met.
     If an exit condition is not provided or met, all PPSP threads 
     that are started will have exited and can be successfully joined. 
     If exit condition is met, all PPSP threads will have
@@ -15,27 +19,54 @@ class PPSP:
         the execution state of the subprocess command.
         """
 
+        starting = False
         running = False
         stopping = False
         stopped = True
 
-    def __init__(self, shell_command: str, exit_condition: str = None):
+    def __init__(self, shell_command: str, **kwargs):
         """Class initialization.
         
         Args:
             shell_command (str): command to be run in subprocess
-            exit_condition (str or None): exit condition for subprocess
+        Kwargs:
+            start_condition (str): Regex string for when stdin processing should begin
+            exit_condition (str): Regex string for when the process should end
         """
-  
+
         # Subprocess management
         self._shell_command = shell_command
 
-        try:
-            self._exit_condition = re.compile(exit_condition) \
-                if exit_condition is not None else None
-        except re.error as e:            
+        # Regex start condition if applicable as to when commands should
+        # start being processed based on an output from stdout
+        if 'start_condition' in kwargs:
+            if type(kwargs['start_condition']) is str:
+                try:
+                    self._start_condition = re.compile(
+                        kwargs['start_condition']
+                    )
+                except re.error:
+                    self._start_condition = None
+            else:
+                self._start_condition = None
+        else:
+            self._start_condition = None
+
+        # Regex condition as to when threads should stop based on
+        # an output from stdout
+        if 'exit_condition' in kwargs:
+            if type(kwargs['exit_condition']) is str:
+                try:
+                    self._exit_condition = re.compile(
+                        kwargs['exit_condition']
+                    )
+                except re.error:
+                    self._exit_condition = None
+            else:
+                self._exit_condition = None
+        else:
             self._exit_condition = None
-        
+
         # Subprocess
         self._subprocess = None
 
@@ -106,7 +137,14 @@ class PPSP:
         """
 
         self.__start_process()
-        self._status.running = True
+
+        if self._start_condition is None:
+            self._status.starting = False
+            self._status.running = True
+        else:
+            self._status.starting = True
+            self._status.running = False
+            
         self._status.stopped = False
         self._status.stopping = False
 
@@ -125,6 +163,7 @@ class PPSP:
         self._reader_tr.join()
         self._writer_tr.join()
 
+        self._status.starting = False
         self._status.running = False
         self._status.stopping = False
         self._status.stopped = True
@@ -173,7 +212,8 @@ class PPSP:
             
     def __reader(self) -> None:
         """Reader thread gets output from subprocess and puts the stripped data
-        into the stdout queue. Exits if status is stopping.
+        into the stdout queue. Sets state to running if start condition is set and met.
+        Exits if status is stopping.
         """
 
         while True:
@@ -187,9 +227,16 @@ class PPSP:
                 for linen in self._subprocess.stdout:
                     if self._status.stopping:
                         break
+
                     line = linen.decode(sys.getdefaultencoding())
                     if line:
-                        self._stdout_queue.put(line.strip())
+                        if self._start_condition:
+                            if re.match(self._start_condition, line):
+                                self._status.starting = False
+                                self._status.running = True
+                        
+                        if self._status.running:
+                            self._stdout_queue.put(line.strip())
 
                         if self._exit_condition:
                             if re.match(self._exit_condition, line):
@@ -207,5 +254,6 @@ class PPSP:
             if self._status.stopping:
                 break
 
-            if not self._stdin_queue.empty():
+            if self._status.running and \
+                not self._stdin_queue.empty():
                 self.__send_input()

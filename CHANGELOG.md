@@ -3,6 +3,17 @@
 Changes between project versions will be documented here.
 
 
+## [3.0.0]
+### Added
+- Ability to only start capturing output and allowing commands to be issued when process output line matches start condition
+
+### Changed
+- exit_condition positional argument now replaced with keyword arguments for start_condition regex string and exit_condition regex string
+
+### Removed
+- Positional argument for exit_condition
+
+
 ## [2.0.3]
 ### Fixed
 - Removed accidental pass keyword where regex exit condition would not be set to None on error

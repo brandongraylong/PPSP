@@ -5,29 +5,35 @@ from ppsp.ppsp import PPSP
 
 
 def __runner(shell_command: str, return_val: dict, 
-    exit_condition: str = None) -> None:
+    **kwargs) -> None:
     """Private method runner instantiates a PPSP instance and 
     sets return_val['val'] to it in order to run the instance
     in a separate daemon thread but still return the instance.
 
     Args:
-        shell_command (str): command to be run
+        shell_command (str): command to be run in subprocess
         return_val (dict): dictionary which acts a PPSP instance return
-        exit_condition (str or None): exit condition for subprocess
+    Kwargs:
+        start_condition (str): Regex string for when stdin processing should begin
+        exit_condition (str): Regex string for when the process should end
     """
 
-    ppsp_instance = PPSP(shell_command, exit_condition)
+    ppsp_instance = PPSP(shell_command, **kwargs)
     return_val['val'] = ppsp_instance
 
 
-def runner(shell_command: str, exit_condition: str = None) -> PPSP:
+def runner(shell_command: str, **kwargs) -> PPSP:
     """Runner instantiates a PPSP instance in a daemon thread and
     returns it. Allows for multiple PPSP instances to be created at
     once.
 
     Args:
-        shell_command (str): command to be run
-        exit_condition (str or None): exit condition for subprocess
+        shell_command (str): command to be run in subprocess
+    Kwargs:
+        start_condition (str): Regex string for when stdin processing should begin
+        exit_condition (str): Regex string for when the process should end
+    Returns:
+        PPSP: instance of the PPSP class used for subprocess management
     """
 
     return_val = {
@@ -37,9 +43,9 @@ def runner(shell_command: str, exit_condition: str = None) -> PPSP:
         target=__runner,
         args=(
             shell_command, 
-            return_val, 
-            exit_condition
+            return_val
         ),
+        kwargs=kwargs,
         daemon=True
     )
     ppsp_th.start()
