@@ -15,12 +15,12 @@ Tested with Python version 3.7.
 
 
 ## How to install
-```pip install ppsp```
+``pip install ppsp``
 
 
 ## Example Program
 ### example.py
-```
+``
 from ppsp.utils import runner
 
 
@@ -74,4 +74,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-```
+``
