@@ -20,7 +20,7 @@ Tested with Python version 3.7.
 
 ## Example Program
 ### example.py
-``
+<code>
 from ppsp.utils import runner
 
 
@@ -73,5 +73,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-``
+</code>
