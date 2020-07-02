@@ -21,15 +21,18 @@ Tested with Python version 3.7.
 ## Example Program
 ### example.py
 ```
+import os
+
 from ppsp.utils import runner
 
 
 RUNNNERS = [
     {
-        'command': 'ls -l'
+        'command': 'ls -l',
+        'cwd': os.getcwd()
     }, 
     {
-        'command': 'ping google.com -w 10',
+        'command': 'ping github.com -w 10',
         'start_condition': '(.*)icmp_seq=5(.*)',
         'exit_condition': '(.*)icmp_seq=9(.*)'
     }
@@ -43,6 +46,7 @@ def main():
             r['command'],
             start_condition=r['start_condition'] if 'start_condition' in r else None,
             exit_condition=r['exit_condition'] if 'exit_condition' in r else None,
+            cwd=r['cwd'] if 'cwd' in r else None
         )
         
         instance.start()
@@ -73,4 +77,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 ```

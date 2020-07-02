@@ -1,4 +1,4 @@
-import os, sys, queue, re, subprocess, threading
+import os, sys, queue, re, subprocess, threading, random, string
 
 
 class PPSP:
@@ -13,6 +13,8 @@ class PPSP:
     exited and can be successfully joined. Must call start and stop
     explicitly.
     """
+
+    _id_list = []
 
     class _Status:
         """Private class status is used for keeping track of
@@ -32,8 +34,21 @@ class PPSP:
         Kwargs:
             start_condition (str): Regex string for when stdin processing should begin
             exit_condition (str): Regex string for when the process should end
+            cwd (str): Absolute directory path to subprocess current working directory
         """
+        
+        # Thread lock
+        self._thread_lock = threading.Lock()
 
+        # Set id
+        if 'id' in kwargs:
+            if kwargs['id'] in type(self)._id_list:
+                self.__set_id(kwargs)
+            else:
+                self._id = kwargs['id']
+        else:
+            self.__set_id(kwargs)    
+        
         # Subprocess management
         self._shell_command = shell_command
 
@@ -41,12 +56,7 @@ class PPSP:
         # start being processed based on an output from stdout
         if 'start_condition' in kwargs:
             if type(kwargs['start_condition']) is str:
-                try:
-                    self._start_condition = re.compile(
-                        kwargs['start_condition']
-                    )
-                except re.error:
-                    self._start_condition = None
+                self._start_condition = kwargs['start_condition']
             else:
                 self._start_condition = None
         else:
@@ -56,16 +66,25 @@ class PPSP:
         # an output from stdout
         if 'exit_condition' in kwargs:
             if type(kwargs['exit_condition']) is str:
-                try:
-                    self._exit_condition = re.compile(
-                        kwargs['exit_condition']
-                    )
-                except re.error:
-                    self._exit_condition = None
+                self._exit_condition = kwargs['exit_condition']
             else:
                 self._exit_condition = None
         else:
             self._exit_condition = None
+
+        # Current working directory of subprocess
+        if 'cwd' in kwargs:
+            if kwargs['cwd'] is not None and \
+                type(kwargs['cwd']) is str:
+                if os.path.exists(kwargs['cwd']) and \
+                    os.path.isdir(kwargs['cwd']):
+                    self._cwd = kwargs['cwd']
+                else:
+                    self._cwd = os.getcwd()
+            else:
+                self._cwd = os.getcwd()
+        else:
+            self._cwd = os.getcwd()
 
         # Subprocess
         self._subprocess = None
@@ -81,6 +100,58 @@ class PPSP:
         # Input and output queue
         self._stdin_queue = queue.Queue()
         self._stdout_queue = queue.Queue()
+
+    def __set_id(self, kwargs) -> None:
+        # Assign unique id for class instance
+        self._thread_lock.acquire()
+        while True:
+            self._id = ''.join(
+                random.choices(
+                    string.ascii_letters + 
+                    string.digits,
+                    k = 32
+                )
+            )
+            if self._id in type(self)._id_list:
+                continue
+            else:
+                type(self)._id_list += [self._id]
+                break
+        self._thread_lock.release()
+
+    @property
+    def id(self) -> str:
+        """Getter for unique id.
+        
+        Returns:
+            str: unique id
+        """
+
+        return self._id
+
+    @property
+    def cwd(self) -> str:
+        return self._cwd
+    
+    @cwd.setter
+    def cwd(self, val) -> None:
+        self._cwd = val
+
+    @property
+    def start_condition(self) -> str:
+        return self._start_condition
+    
+    @start_condition.setter
+    def start_condition(self, val) -> None:
+        self._start_condition = val
+    
+    @property
+    def exit_condition(self) -> str:
+        return self._exit_condition
+    
+    @exit_condition.setter
+    def exit_condition(self, val) -> None:
+        self._exit_condition = val
 
     @property
     def shell_command(self) -> str:
@@ -180,7 +251,7 @@ class PPSP:
 
         self._subprocess = subprocess.Popen(self._shell_command.split(), 
             stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.PIPE, 
-            cwd=os.getcwd())
+            cwd=self._cwd)
             
     def __send_input(self) -> None:
         """Private method for sending input via stdin to subprocess.
